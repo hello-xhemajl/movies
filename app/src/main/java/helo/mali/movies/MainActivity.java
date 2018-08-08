@@ -5,9 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
+import helo.mali.movies.model.Movie;
+import helo.mali.movies.utilities.MoviesJsonUtils;
 import helo.mali.movies.utilities.NetworkUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,12 +43,18 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            Log.v(TAG, "Response " + s);
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+
+            try {
+                List<Movie> movies = MoviesJsonUtils.extractMovies(response);
+                String test = "";
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+            Log.v(TAG, "Response " + response);
         }
     }
-
-    //https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=1afe9082c06f2e12037f4958f570ee76
-    //https://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=1afe9082c06f2e12037f4958f570ee76
 }
