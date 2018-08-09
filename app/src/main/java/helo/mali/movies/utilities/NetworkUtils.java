@@ -57,7 +57,7 @@ public class NetworkUtils {
     /** Method for building request URL for movies*/
     public static URL buildPosterUrl(String posterPath){
         Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon()
-                .appendPath(posterPath)
+                .appendEncodedPath(posterPath)
                 .build();
 
         URL url = null;

@@ -3,6 +3,8 @@ package helo.mali.movies;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -18,18 +20,27 @@ import helo.mali.movies.utilities.NetworkUtils;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
+    private RecyclerView moviesRecyclerView;
+    private MovieAdapter movieAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        movieAdapter = new MovieAdapter();
+
+        moviesRecyclerView = findViewById(R.id.movies_recycler_view);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 3);
+        moviesRecyclerView.setLayoutManager(layoutManager);
+        moviesRecyclerView.setAdapter(movieAdapter);
+
         URL url = NetworkUtils.buildUrl("popularity.desc");
 
         new GetMoviesTask().execute(url);
     }
 
-    private static class GetMoviesTask extends AsyncTask<URL, Void, String>{
+    private class GetMoviesTask extends AsyncTask<URL, Void, String>{
         @Override
         protected String doInBackground(URL... urls) {
             String response = null;
@@ -48,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 List<Movie> movies = MoviesJsonUtils.extractMovies(response);
-                String test = "";
+                movieAdapter.setMovies(movies);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
