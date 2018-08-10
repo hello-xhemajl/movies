@@ -26,16 +26,25 @@ public class MoviesJsonUtils {
         JSONArray movieArray = responseObject.getJSONArray("results");
         for(int i = 0; i < movieArray.length(); i++){
             JSONObject movieObject = movieArray.getJSONObject(i);
-
-            String title = movieObject.getString("title");
-            String posterPath = movieObject.getString("poster_path");
-            double rating = movieObject.getInt("vote_average");
-            String releaseDate = movieObject.getString("release_date");
-
-            Movie movie = new Movie(title, posterPath, rating, releaseDate);
+            Movie movie = extractMovie(movieObject);
             movies.add(movie);
         }
 
         return movies;
+    }
+
+    public static Movie extractMovie(JSONObject movieObject) throws JSONException {
+
+        String title = movieObject.getString("title");
+        String originalTitle = movieObject.getString("original_title");
+        String overview = movieObject.getString("overview");
+        String posterPath = movieObject.getString("poster_path");
+        double rating = movieObject.getInt("vote_average");
+        String releaseDate = movieObject.getString("release_date");
+        long id = movieObject.getLong("id");
+
+        Movie movie = new Movie(id, title, originalTitle, overview, posterPath, rating, releaseDate);
+
+        return movie;
     }
 }

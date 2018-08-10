@@ -1,16 +1,27 @@
 package helo.mali.movies.model;
 
 public class Movie {
+    private long id;
     private String title;
+    private String originalTitle;
+    private String overview;
     private String posterPath;
     private double rating;
     private String releaseDate;
 
-    public Movie(String title, String posterPath, double rating, String releaseDate) {
+    public Movie(long id, String title, String originalTitle, String overview, String posterPath, double rating, String releaseDate) {
+        this.id = id;
         this.title = title;
+        this.originalTitle = originalTitle;
+        this.overview = overview;
         this.posterPath = posterPath;
         this.rating = rating;
         this.releaseDate = releaseDate;
+    }
+
+
+    public long getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -29,19 +40,11 @@ public class Movie {
         return releaseDate;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getOriginalTitle() {
+        return originalTitle;
     }
 
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
+    public String getOverview() {
+        return overview;
     }
 }

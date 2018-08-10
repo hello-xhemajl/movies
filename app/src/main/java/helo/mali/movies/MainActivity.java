@@ -1,5 +1,6 @@
 package helo.mali.movies;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,14 +14,18 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import helo.mali.movies.model.Movie;
 import helo.mali.movies.utilities.MoviesJsonUtils;
 import helo.mali.movies.utilities.NetworkUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler{
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private RecyclerView moviesRecyclerView;
+    @BindView(R.id.movies_recycler_view)
+    RecyclerView moviesRecyclerView;
+
     private MovieAdapter movieAdapter;
 
     @Override
@@ -28,16 +33,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        movieAdapter = new MovieAdapter();
+        movieAdapter = new MovieAdapter(this);
 
-        moviesRecyclerView = findViewById(R.id.movies_recycler_view);
+        ButterKnife.bind(this);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, 3);
         moviesRecyclerView.setLayoutManager(layoutManager);
         moviesRecyclerView.setAdapter(movieAdapter);
 
-        URL url = NetworkUtils.buildUrl("popularity.desc");
+        URL url = NetworkUtils.buildMoviesUrl("popularity.desc");
 
         new GetMoviesTask().execute(url);
+    }
+
+    @Override
+    public void onClick(long movieId) {
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+        intent.putExtra(DetailActivity.EXTRA_MOVIE_ID, movieId);
+        startActivity(intent);
+
+        Log.v(TAG, "Id is " + movieId);
     }
 
     private class GetMoviesTask extends AsyncTask<URL, Void, String>{

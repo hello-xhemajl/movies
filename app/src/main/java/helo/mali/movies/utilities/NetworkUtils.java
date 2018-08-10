@@ -19,13 +19,13 @@ public class NetworkUtils {
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     private static final String MOVIES_BASE_URL = "https://api.themoviedb.org/3";
-    private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
     private static final String PATH_DISCOVER = "discover";
     private static final String PATH_MOVIES = "movie";
 
+    private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
 
     /** Values for the URI*/
-    private static final String apiKey = "1afe9082c06f2e12037f4958f570ee76";
+    private static final String apiKey = "use_your_api_key";
     private static String sortBy = "";
 
 
@@ -34,7 +34,7 @@ public class NetworkUtils {
     private static final String API_KEY_PARAM = "api_key";
 
     /** Method for building request URL for movies*/
-    public static URL buildUrl(String sortBy){
+    public static URL buildMoviesUrl(String sortBy){
         Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
                 .appendPath(PATH_DISCOVER)
                 .appendPath(PATH_MOVIES)
@@ -50,6 +50,26 @@ public class NetworkUtils {
         }
 
         Log.v(TAG, "Built URL is " + url);
+
+        return url;
+    }
+
+    /** Method for building request URL for a single movie*/
+    public static URL buildMovieDetailsUrl(Long movieId){
+        Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
+                .appendPath(PATH_MOVIES)
+                .appendPath(String.valueOf(movieId))
+                .appendQueryParameter(API_KEY_PARAM, apiKey)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        Log.v(TAG, "Built movie detail URL is " + url);
 
         return url;
     }

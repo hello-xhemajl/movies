@@ -13,12 +13,24 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import helo.mali.movies.model.Movie;
 import helo.mali.movies.utilities.NetworkUtils;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private List<Movie> movies;
+
+    private final MovieAdapterOnClickHandler clickHandler;
+
+    public interface MovieAdapterOnClickHandler{
+        void onClick(long movieId);
+    }
+
+    public MovieAdapter(MovieAdapterOnClickHandler clickHandler) {
+        this.clickHandler = clickHandler;
+    }
 
     @NonNull
     @Override
@@ -57,15 +69,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         notifyDataSetChanged();
     }
 
-    public class MovieViewHolder extends RecyclerView.ViewHolder {
-        public final TextView titleTextView;
-        public final ImageView posterImageView;
+    public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        @BindView(R.id.title_text_view) TextView titleTextView;
+        @BindView(R.id.poster_image_view) ImageView posterImageView;
 
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
+            itemView.setOnClickListener(this);
+        }
 
-            titleTextView = itemView.findViewById(R.id.title_text_view);
-            posterImageView = itemView.findViewById(R.id.poster_image_view);
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            long movieId = movies.get(adapterPosition).getId();
+            clickHandler.onClick(movieId);
         }
     }
 }
