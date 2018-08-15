@@ -1,12 +1,17 @@
 package helo.mali.movies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import org.json.JSONException;
 
@@ -20,8 +25,14 @@ import helo.mali.movies.model.Movie;
 import helo.mali.movies.utilities.MoviesJsonUtils;
 import helo.mali.movies.utilities.NetworkUtils;
 
-public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler{
+public class MainActivity extends AppCompatActivity implements
+        MovieAdapter.MovieAdapterOnClickHandler,
+        SharedPreferences.OnSharedPreferenceChangeListener{
+
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private String searchTag;
+    private URL serchUrl;
 
     @BindView(R.id.movies_recycler_view)
     RecyclerView moviesRecyclerView;
@@ -33,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         movieAdapter = new MovieAdapter(this);
 
         ButterKnife.bind(this);
@@ -40,9 +54,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         moviesRecyclerView.setLayoutManager(layoutManager);
         moviesRecyclerView.setAdapter(movieAdapter);
 
-        URL url = NetworkUtils.buildMoviesUrl("popularity.desc");
-
-        new GetMoviesTask().execute(url);
+        setupSharedPreferences();
     }
 
     @Override
@@ -52,6 +64,49 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
         startActivity(intent);
 
         Log.v(TAG, "Id is " + movieId);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+        if (id == R.id.action_settings){
+            Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
+            startActivity(intent);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setupSharedPreferences() {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        loadMovieBySettings(sharedPreferences);
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    // Take the value from settings
+    private void loadMovieBySettings(SharedPreferences sharedPreferences) {
+        searchTag = sharedPreferences.getString(getString(R.string.pref_tag_key),
+                getString(R.string.pref_tag_most_popular_value));
+
+        serchUrl = NetworkUtils.buildMoviesUrl(searchTag);
+        new GetMoviesTask().execute(serchUrl);
+
+    }
+
+    // The value of settings is changed ( search Tag)
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.pref_tag_key))) {
+            loadMovieBySettings(sharedPreferences);
+        }
     }
 
     private class GetMoviesTask extends AsyncTask<URL, Void, String>{

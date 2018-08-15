@@ -12,10 +12,6 @@ import java.util.Scanner;
 
 public class NetworkUtils {
 
-    //https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=1afe9082c06f2e12037f4958f570ee76
-    //https://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&api_key=1afe9082c06f2e12037f4958f570ee76
-
-
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     private static final String MOVIES_BASE_URL = "https://api.themoviedb.org/3";
@@ -25,7 +21,7 @@ public class NetworkUtils {
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
 
     /** Values for the URI*/
-    private static final String apiKey = "use_your_api_key";
+    private static final String apiKey = "use-your-key";
     private static String sortBy = "";
 
 
