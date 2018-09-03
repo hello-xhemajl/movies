@@ -9,7 +9,10 @@ import java.util.List;
 
 import helo.mali.movies.model.Movie;
 
-public class MoviesJsonUtils {
+public final class MoviesJsonUtils {
+
+    private MoviesJsonUtils(){
+    }
 
     /**
      * Extracts Json movies into a list {@link Movie} objects

@@ -10,31 +10,30 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-public class NetworkUtils {
+public final class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
 
     private static final String MOVIES_BASE_URL = "https://api.themoviedb.org/3";
-    private static final String PATH_DISCOVER = "discover";
     private static final String PATH_MOVIES = "movie";
 
     private static final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/w185";
 
-    /** Values for the URI*/
-    private static final String apiKey = "use-your-key";
-    private static String sortBy = "";
-
+    /** Values for the URI. Place where the API key must me inserted*/
+    private static final String apiKey = "1afe9082c06f2e12037f4958f570ee76";
 
     /** Keys for URI*/
-    private static final String SORT_BY_PARAM = "sort_by";
     private static final String API_KEY_PARAM = "api_key";
 
+    private NetworkUtils(){
+
+    }
+
     /** Method for building request URL for movies*/
-    public static URL buildMoviesUrl(String sortBy){
+    public static URL buildMoviesUrl(String preferedEndpoint){
         Uri builtUri = Uri.parse(MOVIES_BASE_URL).buildUpon()
-                .appendPath(PATH_DISCOVER)
                 .appendPath(PATH_MOVIES)
-                .appendQueryParameter(SORT_BY_PARAM, sortBy)
+                .appendPath(preferedEndpoint)
                 .appendQueryParameter(API_KEY_PARAM, apiKey)
                 .build();
 

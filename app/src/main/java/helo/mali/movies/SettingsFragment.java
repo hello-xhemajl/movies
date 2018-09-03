@@ -1,4 +1,4 @@
-package helo.mali.movies.utilities;
+package helo.mali.movies;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,9 +9,10 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
 
 import helo.mali.movies.R;
-
+/** Fragment responsible for displaying user preferences related to moves**/
 public class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceChangeListener
         , SharedPreferences.OnSharedPreferenceChangeListener {
+
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.pref_settings);

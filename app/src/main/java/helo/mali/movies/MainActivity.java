@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -31,7 +32,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private String searchTag;
+    /** Search tag could be 'most popular' or 'top rated' */
+    private String moviePreference;
     private URL serchUrl;
 
     @BindView(R.id.movies_recycler_view)
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(long movieId) {
+        // Show details of the selected movie
         Intent intent = new Intent(MainActivity.this, DetailActivity.class);
         intent.putExtra(DetailActivity.EXTRA_MOVIE_ID, movieId);
         startActivity(intent);
@@ -77,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements
 
         int id = item.getItemId();
         if (id == R.id.action_settings){
+            // Start settings so user can change her preferences on weather to show
+            // 'top rated' or 'most popular" moview
             Intent intent = new Intent(MainActivity.this,SettingsActivity.class);
             startActivity(intent);
         }
@@ -84,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setupSharedPreferences() {
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         loadMovieBySettings(sharedPreferences);
 
@@ -93,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements
 
     // Take the value from settings
     private void loadMovieBySettings(SharedPreferences sharedPreferences) {
-        searchTag = sharedPreferences.getString(getString(R.string.pref_tag_key),
+        moviePreference = sharedPreferences.getString(getString(R.string.pref_tag_key),
                 getString(R.string.pref_tag_most_popular_value));
 
-        serchUrl = NetworkUtils.buildMoviesUrl(searchTag);
+        serchUrl = NetworkUtils.buildMoviesUrl(moviePreference);
         new GetMoviesTask().execute(serchUrl);
 
     }
@@ -126,11 +130,15 @@ public class MainActivity extends AppCompatActivity implements
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
 
+            if(response == null)
+                Toast.makeText(MainActivity.this, R.string.api_error, Toast.LENGTH_LONG).show();
+
             try {
                 List<Movie> movies = MoviesJsonUtils.extractMovies(response);
                 movieAdapter.setMovies(movies);
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.e(TAG, e.getMessage());
             }
 
 
